@@ -94,4 +94,13 @@ Jonathan spent $600 (300 * 2) in June and $20 ( 2 * 10) in July 2020.
 Moustafa spent $110 (10 * 2 + 45 * 2) in June and $0 in July 2020.
 
 
+select f.customer_id, f.name from
+(select o.customer_id, c.name, p.price, month(o.order_date) as mth, sum(p.price*o.quantity) as cost
+from orders o, customers c, product p
+where o.customer_id = c.customer_id and o.product_id = p.product_id
+group by customer_id, month(o.order_date)
+having mth IN (6, 7) and cost >= 100) f 
+group by f.customer_id
+having count(f.name) >1;
+
 
