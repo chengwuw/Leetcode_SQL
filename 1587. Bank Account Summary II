@@ -70,6 +70,17 @@ Charlie's balance is (6000 + 6000 - 4000) = 8000.
 
 SOLUTION ----------------------------------------
 ** SUBQUERY >> DUNNO HOW TO GET BALANCE
+select name, amount as balance
+from users join (
+    select account,sum(amount) as amount
+    from transactions
+    group by account
+    having amount>10000
+) tmp
+on users.account=tmp.account;
+
+
+
 ** JOIN: treat transaction as right table and use right join to combine these two tables
 ** group by account and filter the groups using balance > 10000
 
@@ -81,7 +92,11 @@ on u.account = t.account
 group by t.account
 having sum(t.amount) > 10000
 
-
+SELECT name, sum(amount) as balance
+FROM Transactions, Users
+WHERE Users.account=Transactions.account
+GROUP BY Transactions.account
+HAVING sum(amount)>10000
 
 
 
