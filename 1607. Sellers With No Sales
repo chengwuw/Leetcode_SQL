@@ -89,6 +89,7 @@ SOLUTION---------------------------------------------------
 ** convert date into year and filter 2020 orders and get the seller_id in that year
 ** filter seller table based on the condition of seller_id not in the seller_id list of 2020
 
+
 select seller_name 
 from seller 
 where seller_id not in (
@@ -99,3 +100,18 @@ where seller_id not in (
 order by seller_name
 
 
+
+
+SELECT
+    S.seller_name
+FROM
+    Seller S
+LEFT JOIN
+    Orders O
+ON S.seller_id = O.seller_id AND sale_date BETWEEN '2020-01-01' AND '2020-12-31' # multi-join-condition >> different from `where date`: `join` return none, `where` remove unmatched value.
+GROUP BY
+    S.seller_id
+HAVING
+    COUNT(order_id) = 0
+ORDER BY
+    seller_name ASC
