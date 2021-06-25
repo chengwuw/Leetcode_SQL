@@ -85,7 +85,12 @@ YEAR(`program_date`) = 2020 AND MONTH(`program_date`) = 06
 DATEDIFF('2020-06-01', program_date) BETWEEN 0 AND 29
 4. like 
 `program_date` like "2020-06%"
-
+5. LEFT
+left(program_date,7)='2020-06'
+6. date_format
+date_format(program_date,'%Y-%m')='2020-06')
+7. EXTRACT
+EXTRACT(unit FROM date) https://www.w3schools.com/sql/func_mysql_extract.asp
 
 
 SOLUTION-------------------------------------------------
@@ -97,3 +102,7 @@ where c.Kids_content = 'Y'
 and c.content_type = 'Movies'
 and month(t.program_date) = 6
 and year(t.program_date) = 2020
+
+
+
+
