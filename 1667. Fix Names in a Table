@@ -47,9 +47,5 @@ SELECT a.user_id,
     CONCAT(UPPER(SUBSTRING(a.name, 1, 1)), LOWER(SUBSTRING(a.name, 2))) AS NAME
 FROM Activity a ORDER BY a.user_id;
 
-作者：SupermanBlues
-链接：https://leetcode-cn.com/problems/fix-names-in-a-table/solution/zi-fu-chuan-pin-jie-by-supermanblues/
-来源：力扣（LeetCode）
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
-
+ 
