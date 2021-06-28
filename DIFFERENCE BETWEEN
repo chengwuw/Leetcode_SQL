@@ -1,0 +1,22 @@
+# DIFFERENCE BETWEEN
+
+# 1. WHERE & HAVING
+# WHERE >> 1/ filter rows, 2/ works on row's data, not on aggregated data
+SELECT * FROM product_t WHERE SellingPrice >= 500;
+# HAVING >> works on aggregated data
+SELECT AVG(SellingPrice), PurchaseCost, ProductCategory FROM product_t
+GROUP BY ProductCategory;
+SELECT AVG(SellingPrice), PurchaseCost, ProductCategory FROM product_t
+GROUP BY ProductCategory
+HAVING PurchaseCost > 100;
+
+# 2. UNION & UNION ALL
+# REMOVE DUPLICATES
+# COLUMN, DATA TYPE
+
+# 3.IN & EXISTS
+
+# IN: compare all values in the corresponding subuery >> small subquery
+# EXISTS: stop as soon as it found a match  >> large subquery
+# IN clause can't compare anything with NULL values, but the EXISTS clause can compare everything with NULLs
+
