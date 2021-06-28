@@ -1,0 +1,55 @@
+Table: Users
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| user_id        | int     |
+| name           | varchar |
++----------------+---------+
+user_id is the primary key for this table.
+This table contains the ID and the name of the user. The name consists of only lowercase and uppercase characters.
+ 
+
+Write an SQL query to fix the names so that only the first character is uppercase and the rest are lowercase.
+
+Return the result table ordered by user_id.
+
+The query result format is in the following example:
+
+ 
+
+Users table:
++---------+-------+
+| user_id | name  |
++---------+-------+
+| 1       | aLice |
+| 2       | bOB   |
++---------+-------+
+
+Result table:
++---------+-------+
+| user_id | name  |
++---------+-------+
+| 1       | Alice |
+| 2       | Bob   |
++---------+-------+
+
+
+# mysql 字符串函数各种复习
+-- CONCAT(str1, str2)：字符连接函数
+-- UPPER(str)：将字符串改为大写字母
+-- LOWER(str)：将字符串改为小写字母
+-- LENGTH(str)：判定字符串长度
+-- SUBSTRING(str, a, b):提取字段中的一段，从字符串str的第a位开始提取，提取b个字符
+-- LEFT(str, n)：提取字符串最左边的n个字符
+-- RIGHT(str, n)：提取字符串最右边的n个字符
+SELECT a.user_id,
+    CONCAT(UPPER(SUBSTRING(a.name, 1, 1)), LOWER(SUBSTRING(a.name, 2))) AS NAME
+FROM Activity a ORDER BY a.user_id;
+
+作者：SupermanBlues
+链接：https://leetcode-cn.com/problems/fix-names-in-a-table/solution/zi-fu-chuan-pin-jie-by-supermanblues/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+
