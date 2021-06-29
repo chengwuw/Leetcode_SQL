@@ -1,3 +1,9 @@
+
+--------------------------------------------------------------------------------------------
+first_value >> can be replaced by `<= all (select .. from .. where a.id = b.id)`
+last_value
+--------------------------------------------------------------------------------------------
+
 -- the employees who have the lowest salary in each department
 -- lowest >> first_value
 -- each department >> join table and return name
@@ -29,3 +35,52 @@ FROM
     employees e
     INNER JOIN departments d 
         ON d.department_id = e.department_id;
+
+
+
+--------------------------------------------------------------------------------------------
+# lag and lead
+-- lag: previous value
+-- lead: next value
+--------------------------------------------------------------------------------------------
+
+
+-- previous salary
+select *, lag(salary) over (partition by employee_id order by fiscal_year) as previous_salary
+from basic_pays;
+-- YoY salary increment
+select employee_id, fiscal_year, salary, previous_salary, concat( round((salary-previous_salary)/previous_salary, 2) * 100, '%') as YoY
+from (
+    select *
+		, lag(salary) over (
+			partition by employee_id 
+			order by fiscal_year) as previous_salary
+	from basic_pays) t;
+
+-- next hire date
+use wind_function;
+select * from employees;
+select 
+	employee_id
+    , first_name
+    , last_name
+    , hire_date
+    , lead(hire_date) over (
+		order by hire_date) as next_hire_date
+from employees;
+
+select 
+	employee_id
+    , first_name
+    , last_name
+    , department_name
+    , hire_date
+    , lead(hire_date, 1, 'N/A') over (
+		partition by d.department_name
+		order by hire_date) as next_hire_date
+from employees e
+inner join departments d
+on d.department_id = e.department_id;
+
+
+
