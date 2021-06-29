@@ -1,0 +1,31 @@
+-- the employees who have the lowest salary in each department
+-- lowest >> first_value
+-- each department >> join table and return name
+
+select 
+	distinct d.department_name
+  , e.salary
+	, first_value(concat(first_name,' ', last_name)) over (
+		partition by e.department_id 
+        order by salary
+	) as lowest_emp
+from employees e
+inner join departments d
+on e.department_id = d.department_id;
+
+-- last value vs first value >> last value should be followed by `frame` clause bc range starts from first row to the current row.
+SELECT
+    first_name,
+    last_name,
+    department_name,
+    salary,
+    LAST_VALUE (CONCAT(first_name,' ',last_name)) OVER (
+        PARTITION BY department_name
+        ORDER BY salary
+        RANGE BETWEEN UNBOUNDED PRECEDING AND 
+        UNBOUNDED FOLLOWING
+    ) highest_salary
+FROM
+    employees e
+    INNER JOIN departments d 
+        ON d.department_id = e.department_id;
