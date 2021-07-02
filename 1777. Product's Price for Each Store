@@ -1,0 +1,129 @@
+Table: Products
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| product_id  | int     |
+| store       | enum    |
+| price       | int     |
++-------------+---------+
+(product_id,store) is the primary key for this table.
+store is an ENUM of type ('store1', 'store2', 'store3') where each represents the store this product is available at.
+price is the price of the product at this store.
+ 
+
+Write an SQL query to find the price of each product in each store.
+
+Return the result table in any order.
+
+The query result format is in the following example:
+
+ 
+
+Products table:
++-------------+--------+-------+
+| product_id  | store  | price |
++-------------+--------+-------+
+| 0           | store1 | 95    |
+| 0           | store3 | 105   |
+| 0           | store2 | 100   |
+| 1           | store1 | 70    |
+| 1           | store3 | 80    |
++-------------+--------+-------+
+Result table:
++-------------+--------+--------+--------+
+| product_id  | store1 | store2 | store3 |
++-------------+--------+--------+--------+
+| 0           | 95     | 100    | 105    |
+| 1           | 70     | null   | 80     |
++-------------+--------+--------+--------+
+Product 0 price's are 95 for store1, 100 for store2 and, 105 for store3.
+Product 1 price's are 70 for store1, 80 for store3 and, it's not sold in store2.
+
+
+------------------------------------------------
+NOTE
+------------------------------------------------
+CONVERT ROWS TO COLUMNS
+
+
+
+两种解法：
+
+第一种行转列，如果product没有在对应的商店出现，则记为null值。注意这里用group by做聚合时，sum会把每个product的price相加，sum中加入if的作用就是限定对应store的price可以被加，如果不符合条件就输出null，而在sum中如果含有null值则会直接输出Null
+
+** METHOD #1: AGGREAGATE FUNCTION (MAX. MIN, SUM,..) + CASE WHEN
+select
+    product_id,
+    sum(if(store='store1',price,null)) store1,
+    sum(if(store='store2',price,null)) store2,
+    sum(if(store='store3',price,null)) store3
+from
+    Products
+group by
+    1
+    
+
+-- WRONG: IF WE DONT HAVE AGGREGATE FUNCTION
+SELECT 
+    product_id,
+    (CASE store WHEN 'store1' THEN price ELSE null END) AS store1, 
+    (CASE store WHEN 'store2' THEN price ELSE null END) AS store2, 
+    (CASE store WHEN 'store3' THEN price ELSE null END) AS store3
+FROM products
+
+执行之后会出现如下结果:
+[0, 95, null, null], 
+[0, null, null, 105], 
+[0, null, 100, null], 
+[1, 70, null, null], 
+[1, null, null, 80]
+
+-- SO WE NEED TO REMOVE THE NULL VALUE AND SET IT AS STORE #123 -- 
+
+
+第二种解法是穷举所有的store记录，用left join联立Products表
+** METHOD #2: JOIN
+
+
+select
+    distinct p.product_id, a.price store1, b.price store2, c.price store3
+from
+    Products p
+left join 
+    (select * from Products where store = 'store1') a on p.product_id = a.product_id
+left join
+    (select * from Products where store = 'store2') b on p.product_id = b.product_id
+left join
+    (select * from Products where store = 'store3') c on p.product_id = c.product_id
+
+这里用group by去重会比distinct更快一点：
+select
+    p.product_id,
+    a.price store1,
+    b.price store2,
+    c.price store3
+from
+    Products p
+left join 
+    (select * from Products where store = 'store1') a on p.product_id = a.product_id
+left join
+    (select * from Products where store = 'store2') b on p.product_id = b.product_id
+left join
+    (select * from Products where store = 'store3') c on p.product_id = c.product_id
+group by
+    1  # 1意思是根据第一个字段进行分组，对第一个字段进行分组后，自然就去除了重复值
+
+
+** METHOD #3: SELECT 
+
+select p1.product_id,
+(select price from Products where product_id = p1.product_id and store = 'store1') as store1,
+(select price from Products where product_id = p1.product_id and store = 'store2') as store2,
+(select price from Products where product_id = p1.product_id and store = 'store3') as store3
+ from Products p1 group by p1.product_id
+
+
+
+
+
