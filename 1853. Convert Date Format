@@ -81,7 +81,7 @@ date参数是合法的日期。format规定日期/时间的输出格式。
 %Y	    年，4 位
 %y	    年，2 位
 
-
+ 
 
 SELECT date_format(day, '%W, %M %e, %Y') as day 
 from days
