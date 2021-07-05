@@ -22,6 +22,7 @@ SOLUTION
 ----------------------------------------------
 
 return null ==> ifnull or temp table + second high
+临时表处理null
 
 
 
