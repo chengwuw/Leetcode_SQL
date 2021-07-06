@@ -43,6 +43,23 @@ Result table:
 (1, A) and (3, C) were changed from 'm' to 'f'.
 (2, B) and (4, D) were changed from 'f' to 'm'.
 
-来源：力扣（LeetCode）
-链接：https://leetcode-cn.com/problems/swap-salary
-著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+
+
+
+
+-------------------------------------------
+SOLUTION
+-------------------------------------------
+
+
+
+
+UPDATE salary
+set sex = case when sex = 'f' then 'm' else 'f' end
+
+
+UPDATE table_name
+SET column1 = value1, column2 = value2, ...
+WHERE condition;
+
