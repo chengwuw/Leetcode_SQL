@@ -62,7 +62,7 @@ SOLUTION
 -------------------------------------------
 ** `only` 数学化 > count if = multiple condition`
 ** a in b
-
+ 
 
 select p.product_id, p.product_name
 from product p 
