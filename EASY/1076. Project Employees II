@@ -62,7 +62,7 @@ The first project has 3 employees while the second one has 2.
 -------------------------------------------
 SOLUTION
 -------------------------------------------
-# 最值问题-having count(*0)=(subquery-最值)
+# 最值问题-having count(*)=(subquery-最值)
 
 
 SELECT project_id
