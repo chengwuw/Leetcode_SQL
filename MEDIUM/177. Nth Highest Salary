@@ -1,0 +1,65 @@
+Write a SQL query to get the nth highest salary from the Employee table.
+
++----+--------+
+| Id | Salary |
++----+--------+
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
++----+--------+
+For example, given the above Employee table, the nth highest salary where n = 2 is 200. If there is no nth highest salary, then the query should return null.
+
++------------------------+
+| getNthHighestSalary(2) |
++------------------------+
+| 200                    |
++------------------------+
+
+
+
+-------------------------------------------
+SOLUTION
+-------------------------------------------
+# `全局最值 max/min value-limit offset + window func`
+
+
+
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+set n = n - 1;  # HOW TO set 
+  RETURN (
+      # Write your MySQL query statement below.
+      select 
+      case when n <= (select count(distinct Salary)-1 from Employee )  # null value
+      then (
+      select distinct salary  # dense_rank = distinct salary order desc
+      from Employee
+      order by Salary desc
+      limit 1 offset n )
+      else null 
+      end 
+  );
+END
+
+
+
+# method 2
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+  RETURN (
+      # Write your MySQL query statement below.
+      with rnk as (
+      select Salary, dense_rank() over(order by Salary desc) my_rk
+      from Employee      
+      )
+      select distinct Salary 
+      from rnk   
+      where my_rk = N
+  );
+END
+
+
+
+
+
+
