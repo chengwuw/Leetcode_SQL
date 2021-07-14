@@ -1,0 +1,51 @@
+The Employee table holds all employees including their managers. Every employee has an Id, and there is also a column for the manager Id.
+
++------+----------+-----------+----------+
+|Id    |Name 	  |Department |ManagerId |
++------+----------+-----------+----------+
+|101   |John 	  |A 	      |null      |
+|102   |Dan 	  |A 	      |101       |
+|103   |James 	  |A 	      |101       |
+|104   |Amy 	  |A 	      |101       |
+|105   |Anne 	  |A 	      |101       |
+|106   |Ron 	  |B 	      |101       |
++------+----------+-----------+----------+
+Given the Employee table, write a SQL query that finds out managers with at least 5 direct report. For the above table, your SQL query should return:
+
++-------+
+| Name  |
++-------+
+| John  |
++-------+
+Note:
+No one would report to himself.
+
+
+
+
+-------------------------------------------
+SOLUTION
+-------------------------------------------
+# how to deal with the null value after left or right join >> 
+    * use `inner join` 
+    * use where to remove the null values from left and right tables
+    * use ifnull value, ifnull(xx, null) == count ifnull
+
+
+select e2.Name as Name # = ifnull(name, null)
+from employee e1 
+left join employee e2  # use inner join to remove null
+on e1.managerid = e2.id
+group by e2.id
+having count(ifnull(e2.id, null )) >= 5 # this is to remove null
+
+#select ifnull(e2.Name, null ) as Name
+#from employee e1 
+#left join employee e2 
+#on e1.managerid = e2.id
+#where e1.managerid is not null 
+#and e2.id is not null 
+#group by e2.id
+#having count(distinct e1.id) >= 5
+
+
