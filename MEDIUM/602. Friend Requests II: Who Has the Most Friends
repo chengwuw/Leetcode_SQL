@@ -35,6 +35,12 @@ In the real world, multiple people could have the same most number of friends, c
 
 
 
+-------------------------------------------
+SOLUTION
+-------------------------------------------
+# 计算两列中 值 出现的次数 > count the number of `value` in more than two columns ==> union all 
+# self union (with duplicates) and then group by + count
+
 
 
 
