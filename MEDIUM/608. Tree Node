@@ -40,8 +40,8 @@ Node '3', '4' and '5' is Leaf node, because they have parent node and they don't
 And here is the image of the sample tree as below:
  
 
-			  1
-			/   \
+        1
+      /   \
     2       3
   /   \
 4       5
@@ -51,6 +51,13 @@ Note
 If there is only one node on the tree, you only need to output its root attributes.
 
 
+
+
+-------------------------------------------
+SOLUTION
+-------------------------------------------
+# execution order of conditions in case when 
+# case when 的条件判定顺序
 
 
 select t1.id, 
