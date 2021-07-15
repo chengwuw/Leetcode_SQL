@@ -1,0 +1,27 @@
+You can’t use window functions in WHERE, because the logical order of operations in an SQL query is completely different from the SQL syntax. 
+
+The LOGICAL ORDER OF OPERATIONS IN SQL is:
+
+FROM, JOIN
+WHERE
+GROUP BY
+aggregate functions
+HAVING
+window functions
+SELECT
+DISTINCT
+UNION/INTERSECT/EXCEPT
+ORDER BY
+OFFSET
+LIMIT/FETCH/TOP
+
+This means that the filters in a WHERE clause are processed before window functions. 
+At the time the WHERE clause is processed, the window functions would not have been computed yet. 
+And if they are not yet computed, you can’t refer to them in WHERE.
+
+This order of operations implies that you can only use window functions in SELECT and ORDER BY. 
+That is, window functions are not accessible in WHERE, GROUP BY, or HAVING clauses. 
+For this reason, you cannot use any of these functions in WHERE: ROW_NUMBER(), RANK(), DENSE_RANK(), LEAD(), LAG(), or NTILE().
+
+
+# SOURCE: https://learnsql.com/blog/window-functions-not-allowed-in-where/ 
