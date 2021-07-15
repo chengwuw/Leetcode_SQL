@@ -2,6 +2,8 @@ Write a query to print the sum of all total investment values in 2016 (TIV_2016)
 
 Have the same TIV_2015 value as one or more other policyholders.
 Are not located in the same city as any other policyholder (i.e.: the (latitude, longitude) attribute pairs must be unique).
+
+
 Input Format:
 The insurance table is described as follows:
 
@@ -40,6 +42,13 @@ So, the result is the sum of TIV_2016 of the first and last record, which is 45.
 
 
 
+
+-------------------------------------------
+SOLUTION
+-------------------------------------------
+# multiple condition ==> conditions are about `more than one` or `unique` ==> count + window function
+# put multiple window function in the `from` and filter in `where`
+# 条件为 某个group的某个field是unique的，但是其中另外一个field又是有重复值的
 
 
 select sum(TIV_2016 )  as TIV_2016 
