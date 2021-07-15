@@ -23,6 +23,10 @@ Note: The longest distance among all the points are less than 10000.
 
 
 
+-------------------------------------------
+SOLUTION
+-------------------------------------------
+
 
 select 
     min(
