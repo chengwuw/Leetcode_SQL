@@ -1,0 +1,100 @@
+Table: Products
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| product_id    | int     |
+| new_price     | int     |
+| change_date   | date    |
++---------------+---------+
+(product_id, change_date) is the primary key of this table.
+Each row of this table indicates that the price of some product was changed to a new price at some date.
+ 
+
+Write an SQL query to find the prices of all products on 2019-08-16. Assume the price of all products before any change is 10.
+
+The query result format is in the following example:
+
+Products table:
++------------+-----------+-------------+
+| product_id | new_price | change_date |
++------------+-----------+-------------+
+| 1          | 20        | 2019-08-14  |
+| 2          | 50        | 2019-08-14  |
+| 1          | 30        | 2019-08-15  |
+| 1          | 35        | 2019-08-16  |
+| 2          | 65        | 2019-08-17  |
+| 3          | 20        | 2019-08-18  |
++------------+-----------+-------------+
+
+Result table:
++------------+-------+
+| product_id | price |
++------------+-------+
+| 2          | 50    |
+| 1          | 35    |
+| 3          | 10    |
++------------+-------+
+
+
+
+
+
+
+
+
+
+
+# 转化为最值问题 > `convert to max value, null value > window function, join+ifnull`
+> 挑出最近一次的日期（在2019-08-16之前），选择他的价格  > 最值问题 max value
+> 特殊情况： 如果在该日期之后 才有价格，之前无，是 10    > 空值问题 null value
+
+
+# METHOD 2 
+SELECT DISTINCT P.PRODUCT_ID, IFNULL(A.NEW_PRICE, 10) AS PRICE
+FROM PRODUCTS AS P
+LEFT JOIN (
+    SELECT 
+        PRODUCT_ID
+        , NEW_PRICE
+        , RANK() OVER(PARTITION BY PRODUCT_ID ORDER BY CHANGE_DATE DESC) AS `RANK`
+    FROM PRODUCTS
+    WHERE CHANGE_DATE <= '2019-08-16') AS A
+ON P.PRODUCT_ID = A.PRODUCT_ID
+AND `RANK` = 1;
+
+
+select p2.product_id, ifnull(p1.latest_p,10) as price 
+from (
+    select product_id, new_price, 
+        first_value(new_price) over (
+            partition by product_id order by change_date desc
+        ) as latest_p
+    from products
+    where change_date <= '2019-08-16'
+) p1 
+right join (
+    select distinct product_id
+    from products 
+) p2 
+on p1.product_id = p2.product_id
+group by 1
+
+
+# METHOD 1
+SELECT DISTINCT P.PRODUCT_ID, IFNULL(A.NEW_PRICE, 10) AS PRICE
+FROM PRODUCTS AS P
+LEFT JOIN (SELECT PRODUCT_ID, NEW_PRICE
+           FROM PRODUCTS
+           WHERE CHANGE_DATE <= '2019-08-16'
+           AND (PRODUCT_ID, CHANGE_DATE) IN (SELECT PRODUCT_ID, MAX(CHANGE_DATE)
+                                             FROM PRODUCTS
+                                             WHERE CHANGE_DATE <= '2019-08-16'
+                                             GROUP BY 1)) AS A
+ON P.PRODUCT_ID = A.PRODUCT_ID;
+
+
+
+
+
+
