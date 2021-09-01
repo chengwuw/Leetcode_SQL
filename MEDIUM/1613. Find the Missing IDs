@@ -1,0 +1,66 @@
+Table: Customers
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| customer_id   | int     |
+| customer_name | varchar |
++---------------+---------+
+customer_id is the primary key for this table.
+Each row of this table contains the name and the id customer.
+ 
+
+Write an SQL query to find the missing customer IDs. The missing IDs are ones that are not in the Customers table but are in the range between 1 and the maximum customer_id present in the table.
+
+Notice that the maximum customer_id will not exceed 100.
+
+Return the result table ordered by ids in ascending order.
+
+The query result format is in the following example.
+
+ 
+
+Customers table:
++-------------+---------------+
+| customer_id | customer_name |
++-------------+---------------+
+| 1           | Alice         |
+| 4           | Bob           |
+| 5           | Charlie       |
++-------------+---------------+
+
+Result table:
++-----+
+| ids |
++-----+
+| 2   |
+| 3   |
++-----+
+The maximum customer_id present in the table is 5, so in the range [1,5], IDs 2 and 3 are missing from the table.
+
+
+
+
+-------------------------------------------
+SOLUTION
+-------------------------------------------
+-- recursive >> consecutive, 连续 自增表 > with num(n) as ()
+
+
+with recursive num(n) as (
+    select 1 as a
+    union all
+    select n+1 from num where n<100)
+
+select n as ids
+from num
+where n not in (select customer_id from Customers) 
+and n<=(select max(customer_id) from Customers)
+
+--  with recursive的逻辑
+-- 1.首先设置父表，作为基础表
+-- 2.再在基础表上，union all。
+-- 3.注意循环语句的来源是基础表，然后设置循环语句与基础表之间的关系。
+-- 4.n表示column name(也就是基础表有哪些列)
+-- 4.注意：select n+1 不是代表输出名“n+1”列的值，而是在num 的 “n”列下，把上一个n值+1
+-- 然后放到名字为“n”的列下面
