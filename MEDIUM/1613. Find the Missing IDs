@@ -28,7 +28,7 @@ Customers table:
 | 4           | Bob           |
 | 5           | Charlie       |
 +-------------+---------------+
-
+ 
 Result table:
 +-----+
 | ids |
