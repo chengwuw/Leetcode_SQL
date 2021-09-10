@@ -140,6 +140,8 @@ SOLUTION
 # >> window function; a left join b on a.date >= b.date; count()+count()
 
 
+## SOLUTION 1
+
 WITH recursive t(month)  AS(
     SELECT 1 AS month
      UNION ALL 
@@ -169,34 +171,79 @@ right join d using(month)
 
 
 
+## SOLUTION 2
 
-
-WITH recursive t  AS(
-    SELECT 1 AS month
-     UNION ALL 
-    SELECT month+1 FROM t WHERE month < 12 
+WITH recursive months(mon) as (
+    select 1 mon
+    union all 
+    select mon + 1 from months 
+    where mon < 12
 )
-SELECT t1.month
-       ,t1.active_drivers
-       ,IFNULL(t2.accepted_rides,0) AS accepted_rides
-  FROM 
-(SELECT a.month
-       ,IFNULL(COUNT(driver_id),0) AS active_drivers
-  FROM t a
-  LEFT JOIN Drivers b
-    ON 202000 + a.month >= DATE_FORMAT(b.join_date,'%Y%m')
- GROUP BY a.month) t1 
-  LEFT JOIN (SELECT MONTH(requested_at) AS month 
-       ,COUNT(ride_id) AS accepted_rides
-  FROM (SELECT t1.ride_id,t1.requested_at
-          FROM Rides t1
-         INNER JOIN AcceptedRides t2 
-            ON t1.ride_id = t2.ride_id) t
- WHERE YEAR(requested_at) = 2020
- GROUP BY MONTH(requested_at)) t2 
-    ON t1.month = t2.month
- ORDER BY t1.month
+SELECT month, active_drivers, IFNULL(accepted_rides, 0) AS accepted_rides
+FROM
+# 计算比例
+(SELECT month, SUM(drivernum) OVER (ORDER BY month) + (SELECT COUNT(driver_id) FROM Drivers WHERE join_date <= '2019-12-31') AS active_drivers
+FROM
+(SELECT mon AS month, IFNULL(active_driver, 0) AS drivernum 
+FROM months a
+LEFT JOIN
+# 计算活跃司机
+(SELECT MONTH(join_date) AS month, COUNT(driver_id) AS active_driver
+FROM Drivers
+WHERE YEAR(join_date) = '2020'
+GROUP BY MONTH(join_date)
+ORDER BY month) b
+ON a.mon = b.month) c) d
+LEFT JOIN
+# 计算所有接受的行程
+(SELECT MONTH(requested_at) AS date, COUNT(b.ride_id) AS accepted_rides
+FROM (SELECT * FROM Rides WHERE YEAR(requested_at) = '2020') a 
+INNER JOIN AcceptedRides b
+ON a.ride_id = b.ride_id
+GROUP BY MONTH(requested_at)) e
+ON d.month = e.date;
 # https://leetcode-cn.com/problems/hopper-company-queries-i/solution/you-dian-fu-za-by-sylvia-ok-rmdp/
 
 
+
+
+Create table If Not Exists Drivers (driver_id int, join_date date);
+Create table If Not Exists Rides (ride_id int, user_id int, requested_at date);
+Create table If Not Exists AcceptedRides (ride_id int, driver_id int, ride_distance int, ride_duration int);
+Truncate table Drivers;
+insert into Drivers (driver_id, join_date) values ('10', '2019-12-10');
+insert into Drivers (driver_id, join_date) values ('8', '2020-1-13');
+insert into Drivers (driver_id, join_date) values ('5', '2020-2-16');
+insert into Drivers (driver_id, join_date) values ('7', '2020-3-8');
+insert into Drivers (driver_id, join_date) values ('4', '2020-5-17');
+insert into Drivers (driver_id, join_date) values ('1', '2020-10-24');
+insert into Drivers (driver_id, join_date) values ('6', '2021-1-5');
+Truncate table Rides;
+insert into Rides (ride_id, user_id, requested_at) values ('6', '75', '2019-12-9');
+insert into Rides (ride_id, user_id, requested_at) values ('1', '54', '2020-2-9');
+insert into Rides (ride_id, user_id, requested_at) values ('10', '63', '2020-3-4');
+insert into Rides (ride_id, user_id, requested_at) values ('19', '39', '2020-4-6');
+insert into Rides (ride_id, user_id, requested_at) values ('3', '41', '2020-6-3');
+insert into Rides (ride_id, user_id, requested_at) values ('13', '52', '2020-6-22');
+insert into Rides (ride_id, user_id, requested_at) values ('7', '69', '2020-7-16');
+insert into Rides (ride_id, user_id, requested_at) values ('17', '70', '2020-8-25');
+insert into Rides (ride_id, user_id, requested_at) values ('20', '81', '2020-11-2');
+insert into Rides (ride_id, user_id, requested_at) values ('5', '57', '2020-11-9');
+insert into Rides (ride_id, user_id, requested_at) values ('2', '42', '2020-12-9');
+insert into Rides (ride_id, user_id, requested_at) values ('11', '68', '2021-1-11');
+insert into Rides (ride_id, user_id, requested_at) values ('15', '32', '2021-1-17');
+insert into Rides (ride_id, user_id, requested_at) values ('12', '11', '2021-1-19');
+insert into Rides (ride_id, user_id, requested_at) values ('14', '18', '2021-1-27');
+Truncate table AcceptedRides;
+insert into AcceptedRides (ride_id, driver_id, ride_distance, ride_duration) values ('10', '10', '63', '38');
+insert into AcceptedRides (ride_id, driver_id, ride_distance, ride_duration) values ('13', '10', '73', '96');
+insert into AcceptedRides (ride_id, driver_id, ride_distance, ride_duration) values ('7', '8', '100', '28');
+insert into AcceptedRides (ride_id, driver_id, ride_distance, ride_duration) values ('17', '7', '119', '68');
+insert into AcceptedRides (ride_id, driver_id, ride_distance, ride_duration) values ('20', '1', '121', '92');
+insert into AcceptedRides (ride_id, driver_id, ride_distance, ride_duration) values ('5', '7', '42', '101');
+insert into AcceptedRides (ride_id, driver_id, ride_distance, ride_duration) values ('2', '4', '6', '38');
+insert into AcceptedRides (ride_id, driver_id, ride_distance, ride_duration) values ('11', '8', '37', '43');
+insert into AcceptedRides (ride_id, driver_id, ride_distance, ride_duration) values ('15', '8', '108', '82');
+insert into AcceptedRides (ride_id, driver_id, ride_distance, ride_duration) values ('12', '8', '38', '34');
+insert into AcceptedRides (ride_id, driver_id, ride_distance, ride_duration) values ('14', '1', '90', '74');
 
