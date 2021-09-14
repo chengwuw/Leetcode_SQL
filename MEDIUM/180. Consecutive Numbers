@@ -40,6 +40,26 @@ Result table:
 
 
 
+# look at the first two methods which are better
+select distinct l1.num as ConsecutiveNums 
+from logs l1 
+left join logs l2
+on l1.num = l2.num 
+where l1.id -l2.id between 0 and 2
+group by l1.id, l1.num
+having count(*) >= 3
+
+
+select distinct num as ConsecutiveNums 
+from (
+select num,  
+row_number() over (order by id) - row_number() over (partition by Num order by id) as diff
+from 
+logs ) t
+group by num, diff 
+having count(diff) >= 3
+
+
 
 
 # method 1
