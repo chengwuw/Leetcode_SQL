@@ -40,6 +40,20 @@ SOLUTION
 -------------------------------------------
 # window function + null
 
+# inner join > better
+select Department, Employee, salary
+from 
+(
+select 
+d.Name as Department,
+e.Name as Employee,
+salary,
+dense_rank() over (partition by e.DepartmentId order by salary desc) as rnk
+from Employee e 
+inner join Department d
+on e.DepartmentId = d.Id ) t
+where rnk = 1
+
 
 SELECT t.Department, t.Employee, e.Salary
 FROM (
