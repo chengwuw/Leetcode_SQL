@@ -25,6 +25,18 @@ return null ==> ifnull or temp table + second high
 临时表处理null
 
 
+# window function solution
+
+select 
+case when count(*) !=0 then salary else NULL end
+as SecondHighestSalary 
+from 
+(
+select salary, dense_rank() over(order by salary desc) as rnk 
+from employee) t
+where rnk = 2
+
+
 
 方法一：使用子查询和 LIMIT 子句
 算法
