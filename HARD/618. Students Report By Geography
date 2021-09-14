@@ -26,10 +26,11 @@ Follow-up: If it is unknown which continent has the most students, can you write
 
 
 -------------------------------------------
-SOLUTION
+SOLUTION 
 -------------------------------------------
 -- row to column >> case when 
 -- 自动补齐 >> row number + group by 
+-- similar to 1777
 
 select 
     min(case when continent = 'America' then name end) as America,
